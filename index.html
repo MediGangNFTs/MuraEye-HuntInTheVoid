@@ -1,7 +1,23 @@
-<!-- MURA EYE -->
-<div class="mura-eye-container">
-  <img src="mura-eye.png" alt="Mura Eye" class="mura-eye" />
-</div>
 
-<!-- VOID CRYSTAL -->
-<div class="void-crystal"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mura Eye</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="voidEye" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:999999;"></canvas>
+  <script src="mura-eye.js"></script>
+</body>
+</html>
