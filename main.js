@@ -1,0 +1,1 @@
+// Placeholder JS file for Void Eye game logic
