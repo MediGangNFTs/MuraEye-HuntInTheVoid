@@ -1,26 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!DOCTYPE html><html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Void Sector</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: black;
+        font-family: 'Orbitron', sans-serif;
+        color: white;
+      }canvas {
+    display: block;
+  }
+
+  #loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+    font-family: monospace;
+  }
+
+  #info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+</style>
+
+  </head>
+  <body>
+    <div id="loading">Loading The Void Sector...</div>
     <canvas id="gameCanvas"></canvas>
-    <div id="ui">
-        <div id="scoreboard">
-            <span id="score">Score: 0</span>
-            <span id="timer">Time: 0s</span>
-            <span id="kills">Kills: 0</span>
-        </div>
-        <div id="upgrades">
-            <span id="offensiveUpgrade">Offense: None</span>
-            <span id="defensiveUpgrade">Defense: None</span>
-            <span id="specialStatus">Ring: Ready</span>
-        </div>
-    </div>
-    <footer>Built by J.R.</footer>
-    <script src="main.js"></script>
-</body>
+    <div id="info">
+      Time: <span id="timer">0</span> s<br />
+      Kills: <span id="kills">0</span>
+    </div><script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
+
+  let time = 0;
+  let kills = 0;
+
+  const eye = {
+    x: width / 2,
+    y: height / 2,
+    radius: 35,
+    pupilOffset: 8,
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      // Glow
+      const grad = ctx.createRadialGradient(0, 0, this.radius * 0.4, 0, 0, this.radius);
+      grad.addColorStop(0, "rgba(0, 255, 255, 0.4)");
+      grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, this.radius * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Sclera
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pupil
+      const angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
+      const px = Math.cos(angle) * this.pupilOffset;
+      const py = Math.sin(angle) * this.pupilOffset;
+      ctx.fillStyle = "red";
+      ctx.beginPath();
+      ctx.arc(px, py, this.radius / 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    },
+  };
+
+  const mouse = { x: width / 2, y: height / 2 };
+  document.addEventListener("mousemove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  const stars = [];
+  for (let i = 0; i < 300; i++) {
+    stars.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      speed: Math.random() * 0.8 + 0.2,
+      size: Math.random() * 1.2 + 0.2,
+    });
+  }
+
+  function drawStarfield() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = "white";
+    stars.forEach((star) => {
+      star.y += star.speed;
+      if (star.y > height) star.y = 0;
+      ctx.fillRect(star.x, star.y, star.size, star.size);
+    });
+  }
+
+  function animate() {
+    drawStarfield();
+    eye.draw();
+
+    document.getElementById("timer").textContent = Math.floor(time / 60);
+    document.getElementById("kills").textContent = kills;
+
+    time++;
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener("resize", () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  window.onload = () => {
+    document.getElementById("loading").style.display = "none";
+    animate();
+  };
+</script>
+
+  </body>
 </html>
