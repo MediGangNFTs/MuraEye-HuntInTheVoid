@@ -1,28 +1,39 @@
-// Placeholder JavaScript logic
-let canvas = document.getElementById("gameCanvas");
-let ctx = canvas.getContext("2d");
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let score = 0;
-let kills = 0;
-let time = 0;
-
-function updateUI() {
-    document.getElementById("score").innerText = "Score: " + score;
-    document.getElementById("kills").innerText = "Kills: " + kills;
-    document.getElementById("timer").innerText = "Time: " + time + "s";
+class Star {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 1.5;
+    this.speed = Math.random() * 0.5 + 0.2;
+  }
+  update() {
+    this.y += this.speed;
+    if (this.y > canvas.height) this.reset();
+  }
+  draw() {
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.x, this.y, this.size, this.size);
+  }
 }
+
+const stars = Array.from({ length: 150 }, () => new Star());
 
 function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#0ff";
-    ctx.beginPath();
-    ctx.arc(canvas.width/2, canvas.height/2, 20, 0, Math.PI * 2);
-    ctx.fill();
-
-    updateUI();
-    requestAnimationFrame(gameLoop);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach((s) => {
+    s.update();
+    s.draw();
+  });
+  requestAnimationFrame(gameLoop);
 }
-setInterval(() => time++, 1000);
+
 gameLoop();
